@@ -10,21 +10,22 @@
 
 <script>
 export default {
-  name: "mapNavigation"
+  name: "MapController",
 };
 </script>
 
 <style lang="scss" scope>
 .map-navigation {
   position: absolute;
-  left: 18px;
-  top: 15px;
+  right: 30px;
+  top: 20px;
   z-index: 999;
   width: 30px;
   box-shadow: 0px 0px 50px 2px rgba(0, 0, 0, 0.35);
   background-color: #fff;
   ul {
     padding: 0;
+    padding-left: 0 !important; 
     margin: 0;
     list-style: none;
 
@@ -33,10 +34,12 @@ export default {
       height: 28px;
       font-size: 16px;
       line-height: 28px;
+      text-align: center;
       cursor: pointer;
     }
     li:hover {
       background-color: rgb(246, 249, 255);
+      
     }
   }
 }

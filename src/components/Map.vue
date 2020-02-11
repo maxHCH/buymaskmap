@@ -1,30 +1,41 @@
 <template>
   <div class="map-container">
     <div id="map-container"></div>
-    <NavigationCtrl @zoomIn="zoomIn" @zoomOut="zoomOut" @resetMap="resetMap"></NavigationCtrl>
+    <MapController @zoomIn="zoomIn" @zoomOut="zoomOut" @resetMap="resetMap"></MapController>
+    <SideBarNav @searchCounty="searchCountyMapHandler" @searchCity="searchCityMapHandler"></SideBarNav>
   </div>
 </template>
 
 <script>
-import NavigationCtrl from "@/components/NavigationCtrl.vue"
+import MapController from "@/components/MapController.vue"
+import SideBarNav from '@/components/SideBarNav.vue'
 import { getMaskInfo } from '@/api/api.js'
 export default {
   name: "maskmap",
   components: {
-    NavigationCtrl
+    MapController,
+    SideBarNav
   },
   data(){
     return {
       map: null,
       OSMUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      maskData: []
+      maskData: [],
+      county: '桃園市',
+      city: '中壢區'
     }
   },
   computed:{
     coordinatesHandler(){
-      const data = this.maskData.map((item)=> item.geometry.coordinates)
+      const data = this.searchCounty.map((item)=> item.geometry.coordinates)
       return data
-    }
+    },
+    searchCounty(){
+      const county = this.maskData.filter(item =>{
+        return this.county === item.properties.county && this.city === item.properties.town
+      })
+      return county
+    },
   },
   mounted() {
     this.setMapHandler()
@@ -32,10 +43,14 @@ export default {
   },
   methods : {
     async getMaskMapData(){
-      const res = await getMaskInfo()
-      if(res.status === 200){
-        this.maskData = res.data.features
-        this.addMarker()
+      try {
+        const res = await getMaskInfo()
+        if(res.status === 200){
+          this.maskData = res.data.features
+          this.addMarker()
+        }
+      }catch (error) {
+        throw new Error(error)
       }
     },
     setMapHandler(){
@@ -60,7 +75,7 @@ export default {
       if(!this.coordinatesHandler.length){
         return this.$utils.map.createMakerByXY(this.map, [24.953635,121.2234593]);
       }
-      this.maskData.forEach(item => {
+      this.searchCounty.forEach(item => {
         let d = {
           coordinates : item.geometry.coordinates,
           info : item.properties
@@ -74,19 +89,6 @@ export default {
       });
       this.map.addLayer(cluster);
     },
-    // addTooltipHandler(d){
-    //   let dynamicAdultClass = 'tooltip--mask'
-    //   let dynamicChildClass = 'tooltip--mask'
-    //   !d.info.mask_adult ? dynamicAdultClass = 'tooltip--mask-none' : dynamicAdultClass = 'tooltip--mask'
-    //   !d.info.mask_child ? dynamicChildClass = 'tooltip--mask-none' : dynamicChildClass = 'tooltip--mask'
-    //   let toolitps = 
-    //   `
-    //   <h4> ${d.info.name} </h4> 
-    //   <p class="${dynamicAdultClass}">成人：${d.info.mask_adult}</p> 
-    //   <p class="${dynamicChildClass}">兒童：${d.info.mask_child}</p>
-    //   `
-    //   return toolitps
-    // },
     addPopupHandler(d){
       let dynamicAdultClass = 'tooltip--mask'
       let dynamicChildClass = 'tooltip--mask'
@@ -103,6 +105,13 @@ export default {
       <p>最後更新時間： ${d.info.updated}</p>
       `
       return p
+    },
+    searchCountyMapHandler(c){
+      this.county = c
+    },
+    searchCityMapHandler(c){
+      this.city = c
+      this.addMarker();
     }
   }
 };

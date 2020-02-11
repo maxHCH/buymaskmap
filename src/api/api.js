@@ -12,3 +12,11 @@ export const getMaskInfo = data => {
     data
   })
 };
+
+export const getCountyInfo = data => {
+  return api({
+    url: '/js/county.json',
+    method: 'get',
+    data
+  })
+};
