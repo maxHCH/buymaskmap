@@ -65,40 +65,45 @@ export default {
           coordinates : item.geometry.coordinates,
           info : item.properties
         }
-        let maker = this.$utils.map.createMakerByLatLng([d.coordinates[1],d.coordinates[0]])
-        cluster.addLayer(maker.bindTooltip(this.addTooltipHandler(d)))
+        let colorIcon = this.$utils.map.blueIcon
+        if(!d.info.mask_adult && !d.info.mask_child){
+          colorIcon = this.$utils.map.greyIcon
+        }
+        let maker = this.$utils.map.createMakerByLatLng([d.coordinates[1],d.coordinates[0]],{icon:colorIcon})
+        cluster.addLayer(maker.bindPopup(this.addPopupHandler(d)))
       });
       this.map.addLayer(cluster);
     },
-    addTooltipHandler(d){
+    // addTooltipHandler(d){
+    //   let dynamicAdultClass = 'tooltip--mask'
+    //   let dynamicChildClass = 'tooltip--mask'
+    //   !d.info.mask_adult ? dynamicAdultClass = 'tooltip--mask-none' : dynamicAdultClass = 'tooltip--mask'
+    //   !d.info.mask_child ? dynamicChildClass = 'tooltip--mask-none' : dynamicChildClass = 'tooltip--mask'
+    //   let toolitps = 
+    //   `
+    //   <h4> ${d.info.name} </h4> 
+    //   <p class="${dynamicAdultClass}">成人：${d.info.mask_adult}</p> 
+    //   <p class="${dynamicChildClass}">兒童：${d.info.mask_child}</p>
+    //   `
+    //   return toolitps
+    // },
+    addPopupHandler(d){
       let dynamicAdultClass = 'tooltip--mask'
       let dynamicChildClass = 'tooltip--mask'
       !d.info.mask_adult ? dynamicAdultClass = 'tooltip--mask-none' : dynamicAdultClass = 'tooltip--mask'
       !d.info.mask_child ? dynamicChildClass = 'tooltip--mask-none' : dynamicChildClass = 'tooltip--mask'
-      let toolitps = 
+      let p = 
       `
-      <h4> ${d.info.name} </h4> 
-      <p class="${dynamicAdultClass}">成人：${d.info.mask_adult}</p> 
-      <p class="${dynamicChildClass}">兒童：${d.info.mask_child}</p>
+      <h2>${d.info.name}</h2>
+      <hr>
+      <p>${d.info.address}</p>
+      <p>${d.info.phone}</p>
+      <p class="${dynamicAdultClass}">成人口罩數量剩餘：${d.info.mask_adult}</p> 
+      <p class="${dynamicChildClass}">兒童口罩數量剩餘：${d.info.mask_child}</p>
+      <p>最後更新時間： ${d.info.updated}</p>
       `
-      return toolitps
-    },
-    // addPopupHandler(d){
-    //   let popup = this.$utils.map.createPopup(this.map, {
-    //     maxWidth: 200,
-    //     minWidth: 100,
-    //     className: "shop-popup"
-    //   })
-    //   popup.setContent(
-    //     `
-    //     <h2>${d.info.name}</h2>
-    //     <p>${d.info.address}</p>
-    //     <p>${d.info.phone}</p>
-    //     <p>最後更新時間： ${d.info.updated}</p>
-    //     `
-    //   );
-    //   return popup
-    // }
+      return p
+    }
   }
 };
 </script>
@@ -116,8 +121,12 @@ export default {
 }
 .tooltip--mask-none{
   color: red;
+  font-weight: bold;
+  font-size: 14px;
 }
 .tooltip--mask {
-  color : rgb(61, 161, 255)
+  color : rgb(61, 161, 255);
+  font-weight: bold;
+  font-size: 14px;
 }
 </style>

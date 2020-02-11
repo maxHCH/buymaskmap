@@ -11,6 +11,22 @@ let DefaultIcon = $L.icon({
   shadowUrl: iconShadow
 });
 $L.Marker.prototype.options.icon = DefaultIcon;
+const blueIcon = new $L.icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+})
+const greyIcon = new $L.icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+})
 
 const createMap = (divId,options) => {
   let map = $L.map(divId,options)
@@ -35,11 +51,6 @@ const createMakerByLatLng = (latLng, options) => {
 const createMakerCluster = () => {
   return $L.markerClusterGroup()
 }
-// const createPopup = (map, options) => {
-//   let popup = $L.popup(options);
-//   popup.addTo(map);
-//   return popup;
-// }
 
 export default { 
   createMap,
@@ -48,4 +59,6 @@ export default {
   createMakerByXY,
   createMakerCluster,
   createMakerByLatLng,
+  blueIcon,
+  greyIcon
 }
