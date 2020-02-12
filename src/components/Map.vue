@@ -1,20 +1,29 @@
 <template>
   <div class="map-container">
     <div id="map-container"></div>
+    <Loading v-if="isLoading"></Loading>
     <MapController @zoomIn="zoomIn" @zoomOut="zoomOut" @resetMap="resetMap"></MapController>
-    <SideBarNav @searchCounty="searchCountyMapHandler" @searchCity="searchCityMapHandler"></SideBarNav>
+    <SideBarNav 
+      @searchCounty="searchCountyMapHandler" 
+      @searchCity="searchCityMapHandler"
+      @flyToShop="flyToShopHandler"
+      :shopData="searchCounty"
+    >
+    </SideBarNav>
   </div>
 </template>
 
 <script>
 import MapController from "@/components/MapController.vue"
 import SideBarNav from '@/components/SideBarNav.vue'
+import Loading from '@/components/Loading.vue'
 import { getMaskInfo } from '@/api/api.js'
 export default {
   name: "maskmap",
   components: {
     MapController,
-    SideBarNav
+    SideBarNav,
+    Loading
   },
   data(){
     return {
@@ -22,7 +31,9 @@ export default {
       OSMUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       maskData: [],
       county: '桃園市',
-      city: '中壢區'
+      city: '中壢區',
+      markers: [],
+      isLoading: false
     }
   },
   computed:{
@@ -43,10 +54,12 @@ export default {
   },
   methods : {
     async getMaskMapData(){
+      this.isLoading = true
       try {
         const res = await getMaskInfo()
         if(res.status === 200){
           this.maskData = res.data.features
+          this.isLoading = false
           this.addMarker()
         }
       }catch (error) {
@@ -70,11 +83,23 @@ export default {
     resetMap(){
       this.map.flyTo([24.953635,121.2234593], 15)
     },
+    flyToPositionHandler(){
+      const coordinates = this.searchCounty[0].geometry.coordinates
+      this.map.flyTo([coordinates[1],coordinates[0]], 14)
+    },
+    flyToShopHandler(p,id){
+      this.map.setView([p[1],p[0]], 18)
+      setTimeout( ()=>{
+        const data  = this.markers.filter(item=> item.options.id === id)
+        data[0].openPopup()
+      }, 1000);
+    },
+    openPopUpHandler(id){
+      const data  = this.markers.filter(item=> item.options.id === id)
+      data[0].openPopup()
+    },
     addMarker() {
       const cluster = this.$utils.map.createMakerCluster();
-      if(!this.coordinatesHandler.length){
-        return this.$utils.map.createMakerByXY(this.map, [24.953635,121.2234593]);
-      }
       this.searchCounty.forEach(item => {
         let d = {
           coordinates : item.geometry.coordinates,
@@ -84,10 +109,11 @@ export default {
         if(!d.info.mask_adult && !d.info.mask_child){
           colorIcon = this.$utils.map.greyIcon
         }
-        let maker = this.$utils.map.createMakerByLatLng([d.coordinates[1],d.coordinates[0]],{icon:colorIcon})
+        let maker = this.$utils.map.createMakerByLatLng([d.coordinates[1],d.coordinates[0]],{icon:colorIcon,id:d.info.id})
         cluster.addLayer(maker.bindPopup(this.addPopupHandler(d)))
+        this.markers.push(maker.bindPopup(this.addPopupHandler(d)))
       });
-      this.map.addLayer(cluster);
+      this.map.addLayer(cluster)
     },
     addPopupHandler(d){
       let dynamicAdultClass = 'tooltip--mask'
@@ -111,7 +137,9 @@ export default {
     },
     searchCityMapHandler(c){
       this.city = c
-      this.addMarker();
+      this.markers = []
+      this.addMarker()
+      this.flyToPositionHandler()
     }
   }
 };

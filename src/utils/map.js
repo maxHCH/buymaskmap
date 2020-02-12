@@ -52,6 +52,7 @@ const createMakerCluster = () => {
   return $L.markerClusterGroup()
 }
 
+
 export default { 
   createMap,
   createTileLayer,
