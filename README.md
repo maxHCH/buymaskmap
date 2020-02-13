@@ -1,4 +1,6 @@
 # maskmap
+VueCli + Leaflet + OSM 
+店家口罩即時查詢
 
 ## Project setup
 ```
