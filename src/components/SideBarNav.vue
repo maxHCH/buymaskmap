@@ -1,6 +1,9 @@
 <template>
   <div class="side-bar">
     <v-row>
+      <!-- <v-col class="d-flex" cols="12" sm="12">
+        <v-btn @click="getLocation">取得所在位置</v-btn>
+      </v-col> -->
       <v-col class="d-flex" cols="12" sm="6">
         <v-select
           :items="countyHandler"
@@ -117,7 +120,9 @@ export default {
       streetKey: '',
       adultMask: true,
       childMask: true,
-      cityList: []
+      cityList: [],
+      location: null,
+      errorStr: ''
     }
   },
   computed: {
@@ -171,6 +176,15 @@ export default {
     },
     submitCoordinates(position,id){
       this.$emit('flyToShop',position,id)
+    },
+    getLocation(){
+      if(!('geolocation' in navigator)) {
+        return alert('瀏覽器不支援')
+      }
+      navigator.geolocation.getCurrentPosition(position => {
+        console.log(position.coords)
+        this.location = position.coords;
+      })
     }
   }
 }
@@ -203,5 +217,11 @@ export default {
 }
 .side-bar--text {
   color: rgba(0, 0, 0, 0.6);
+}
+@media (max-width:767px) {
+  .side-bar{
+    top: 350px;
+    max-width: 100%;
+  }
 }
 </style>
