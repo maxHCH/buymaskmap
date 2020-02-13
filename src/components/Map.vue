@@ -7,7 +7,9 @@
       @searchCounty="searchCountyMapHandler" 
       @searchCity="searchCityMapHandler"
       @flyToShop="flyToShopHandler"
-      :shopData="searchCounty"
+      @streetKey="searchStreetHandler"
+      @filterShop="filterShopHandler"
+      :shopData="maskShopMarkerHandler"
     >
     </SideBarNav>
   </div>
@@ -32,21 +34,44 @@ export default {
       maskData: [],
       county: '桃園市',
       city: '中壢區',
+      street: '',
       markers: [],
+      filterObj: {
+        adult: true,
+        child: true
+      },
       isLoading: false
     }
   },
   computed:{
-    coordinatesHandler(){
-      const data = this.searchCounty.map((item)=> item.geometry.coordinates)
-      return data
-    },
-    searchCounty(){
-      const county = this.maskData.filter(item =>{
-        return this.county === item.properties.county && this.city === item.properties.town
+    countyMarkerHandler(){
+      const find = this.maskData.filter(item => {
+        let c = item.properties.county
+        let t = item.properties.town
+        let a = item.properties.address
+        return this.county === c && this.city === t && a.indexOf(this.street) !== -1
       })
-      return county
+      return find
     },
+    filterMaskMarkerHandler(){
+      const find = this.countyMarkerHandler.filter(item => {
+        let a = item.properties.mask_adult
+        let c = item.properties.mask_child
+        if(this.filterObj.adult) return !!a
+        else if (this.filterObj.child) return !!c
+        return a > 0 && c > 0
+      })
+      return find
+    },
+    maskShopMarkerHandler(){
+      return this.filterObj.adult || this.filterObj.child ? this.filterMaskMarkerHandler : this.countyMarkerHandler 
+    },
+    getIdHandler(){
+      const d = this.maskData.filter(item => {
+        return !item.properties.town
+      })
+      return d
+    }
   },
   mounted() {
     this.setMapHandler()
@@ -84,8 +109,9 @@ export default {
       this.map.flyTo([24.953635,121.2234593], 15)
     },
     flyToPositionHandler(){
-      const coordinates = this.searchCounty[0].geometry.coordinates
-      this.map.flyTo([coordinates[1],coordinates[0]], 14)
+      const coordinates = this.countyMarkerHandler[0].geometry.coordinates
+      let zoom = !this.street ? zoom = 14 : zoom = 16 
+      this.map.flyTo([coordinates[1],coordinates[0]], zoom)
     },
     flyToShopHandler(p,id){
       this.map.setView([p[1],p[0]], 18)
@@ -100,7 +126,10 @@ export default {
     },
     addMarker() {
       const cluster = this.$utils.map.createMakerCluster();
-      this.searchCounty.forEach(item => {
+      let method = this.filterObj.adult || this.filterObj.child ?
+                    this.filterMaskMarkerHandler : 
+                    this.countyMarkerHandler 
+      method.forEach(item => {
         let d = {
           coordinates : item.geometry.coordinates,
           info : item.properties
@@ -123,7 +152,6 @@ export default {
       let p = 
       `
       <h2>${d.info.name}</h2>
-      <hr>
       <p>${d.info.address}</p>
       <p>${d.info.phone}</p>
       <p class="${dynamicAdultClass}">成人口罩數量剩餘：${d.info.mask_adult}</p> 
@@ -140,6 +168,13 @@ export default {
       this.markers = []
       this.addMarker()
       this.flyToPositionHandler()
+    },
+    searchStreetHandler(key){
+      this.street = key
+      this.flyToPositionHandler()
+    },
+    filterShopHandler(adult,child){
+      this.filterObj = { adult, child}
     }
   }
 };
@@ -162,7 +197,7 @@ export default {
   font-size: 14px;
 }
 .tooltip--mask {
-  color : rgb(61, 161, 255);
+  color : green;
   font-weight: bold;
   font-size: 14px;
 }

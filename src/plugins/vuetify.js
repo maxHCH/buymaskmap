@@ -10,7 +10,8 @@ import Vuetify, {
   VDivider,
   VProgressLinear,
   VBtn,
-  VCardActions
+  VCardActions,
+  VSwitch
 } from 'vuetify/lib'
 import { Ripple } from 'vuetify/lib/directives'
 
@@ -26,7 +27,8 @@ Vue.use(Vuetify,{
     VDivider,
     VProgressLinear,
     VBtn,
-    VCardActions
+    VCardActions,
+    VSwitch
   },
   directives: {
     Ripple,
