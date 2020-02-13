@@ -68,7 +68,9 @@
               兒童口罩剩餘：{{ item.properties.mask_child }}
             </p>
             <p>
-              店家備註： {{ item.properties.service_note }}
+              店家備註： {{ !item.properties.note ? 
+                          item.properties.service_note : item.properties.note 
+                        }}
             </p>
             <p>最後更新時間：{{ item.properties.updated }}</p>
           </v-card-text>
