@@ -40,11 +40,6 @@ const createTileLayer = async (map, url, options) => {
 const createIcon = options => {
   return $L.icon(options);
 }
-const createMakerByXY = (map, coordinate, options = {}) => {
-  let marker = $L.marker($L.latLng(coordinate[0], coordinate[1]), options);
-  marker.addTo(map);
-  return marker;
-}
 const createMakerByLatLng = (latLng, options) => {
   return $L.marker(latLng, options);
 }
@@ -57,7 +52,6 @@ export default {
   createMap,
   createTileLayer,
   createIcon,
-  createMakerByXY,
   createMakerCluster,
   createMakerByLatLng,
   blueIcon,
