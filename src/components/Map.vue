@@ -9,6 +9,7 @@
       @flyToShop="flyToShopHandler"
       @streetKey="searchStreetHandler"
       @filterShop="filterShopHandler"
+      @userLocation="userLocationHandler"
       :shopData="maskShopMarkerHandler"
     >
     </SideBarNav>
@@ -115,13 +116,13 @@ export default {
     },
     flyToShopHandler(p,id){
       this.map.setView([p[1],p[0]], 18)
-      setTimeout( ()=>{
-        const data  = this.markers.filter(item=> item.options.id === id)
+      setTimeout(()=>{
+        const data  = this.markers.filter(item => item.options.id === id)
         data[0].openPopup()
-      }, 1000);
+      }, 1000)
     },
     openPopUpHandler(id){
-      const data  = this.markers.filter(item=> item.options.id === id)
+      const data  = this.markers.filter(item => item.options.id === id)
       data[0].openPopup()
     },
     addMarker() {
@@ -175,6 +176,14 @@ export default {
     },
     filterShopHandler(adult,child){
       this.filterObj = { adult, child}
+    },
+    userLocationHandler(location){
+      this.userLocation = location
+      let colorIcon = this.$utils.map.greyIcon
+      let user = this.$utils.map.createMakerByLatLng([this.userLocation[0],this.userLocation[1]],{icon:colorIcon})
+      this.map.addLayer(user.bindPopup('我的目前位置'))
+      this.map.flyTo([this.userLocation[0],this.userLocation[1]], 15)
+      user.openPopup()
     }
   }
 };

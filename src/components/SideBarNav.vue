@@ -1,8 +1,8 @@
 <template>
   <div class="side-bar">
     <v-row>
-      <v-col class="d-flex" cols="12" sm="12">
-        <v-btn @click="getLocation" color="grey lighten-2">取得目前位置</v-btn>
+      <v-col class="d-flex side-bar--text" cols="12" sm="12">
+        請選擇欲查詢縣市
       </v-col>
       <v-col class="d-flex" cols="12" sm="6">
         <v-select
@@ -53,6 +53,9 @@
           @change="filterShopHandler"
         >
         </v-switch>
+      </v-col>
+      <v-col class="d-flex pt-0" cols="12" sm="12">
+        <v-btn @click="getLocation" color="grey lighten-2">取得當前位置</v-btn>
       </v-col>
     </v-row>
     <v-divider light></v-divider>
@@ -183,7 +186,12 @@ export default {
       }
       navigator.geolocation.getCurrentPosition(position => {
         this.location = [position.coords.latitude,position.coords.longitude]
+        this.$emit('userLocation',this.location)
+      },error => {
+        console.log(error)
+        alert('Something went wrong... You need to allow for it to run!')
       })
+      
     }
   }
 }
