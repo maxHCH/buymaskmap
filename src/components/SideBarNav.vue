@@ -1,9 +1,9 @@
 <template>
   <div class="side-bar">
     <v-row>
-      <!-- <v-col class="d-flex" cols="12" sm="12">
-        <v-btn @click="getLocation">取得所在位置</v-btn>
-      </v-col> -->
+      <v-col class="d-flex" cols="12" sm="12">
+        <v-btn @click="getLocation" color="grey lighten-2">取得目前位置</v-btn>
+      </v-col>
       <v-col class="d-flex" cols="12" sm="6">
         <v-select
           :items="countyHandler"
@@ -182,8 +182,7 @@ export default {
         return alert('瀏覽器不支援')
       }
       navigator.geolocation.getCurrentPosition(position => {
-        console.log(position.coords)
-        this.location = position.coords;
+        this.location = [position.coords.latitude,position.coords.longitude]
       })
     }
   }
