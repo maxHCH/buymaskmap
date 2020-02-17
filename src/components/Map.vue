@@ -56,11 +56,10 @@ export default {
     },
     filterMaskMarkerHandler(){
       const find = this.countyMarkerHandler.filter(item => {
-        let a = item.properties.mask_adult
-        let c = item.properties.mask_child
-        if(this.filterObj.adult) return !!a
-        else if (this.filterObj.child) return !!c
-        return a > 0 && c > 0
+        const { mask_adult: maskA , mask_child: maskC } = item.properties
+        const { adult , child } = this.filterObj
+        if(adult !== child) return adult ? maskA : maskC
+        return maskA > 0 && maskC > 0
       })
       return find
     },
