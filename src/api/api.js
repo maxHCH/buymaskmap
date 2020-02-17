@@ -40,8 +40,9 @@ export const getMaskInfo = data => {
 };
 
 export const getCountyInfo = data => {
+  const devUrl = process.env.NODE_ENV === 'development' ? '/' : '/buymaskmap/' 
   return api({
-    url: '/js/county.json',
+    url: `${devUrl}js/county.json`,
     method: 'get',
     data
   })
