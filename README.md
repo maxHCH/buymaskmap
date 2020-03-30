@@ -1,7 +1,7 @@
-# maskmap
-VueCli + Leaflet + OSM 
-支援PWA，可新增至手機桌面
-店家口罩即時查詢
+# 口罩數量即時查詢
+#### VueCli + Leaflet + OSM 
+
+支援PWA 可新增至手機桌面
 
 ## Project setup
 ```
@@ -17,4 +17,3 @@ yarn run serve
 ```
 yarn run build
 ```
-yarn run lint
