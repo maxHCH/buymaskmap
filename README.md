@@ -2,18 +2,12 @@
 #### VueCli + Leaflet + OSM 
 
 支援PWA 可新增至手機桌面
+---
+功能介紹：
+1. 初始篩選值為桃園市中壢區(用預設值優化效能)
+2. 除了縣市篩選，也可以依照道路篩選，快速找到住家附近的藥局。
+3. 當然還有支持直接抓取你當下位置，更加方便。
+4. 也對藥局口罩類型做篩選，成人以及兒童。
+5. 篩選出的藥局可以點擊查詢位置進而找到該藥局位置
+6. 在藥局詳情部分，有備註可做參考，依照藥局販賣時間去購買。
 
-## Project setup
-```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn run serve
-```
-
-### Compiles and minifies for production
-```
-yarn run build
-```
